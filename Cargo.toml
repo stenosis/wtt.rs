@@ -1,0 +1,10 @@
+[package]
+name = "wttr"
+version = "0.1.0"
+authors = ["Tim Rieck <tim.rieck@googlemail.com>"]
+
+[dependencies]
+curl = "0.4.19"
+directories = "1.0.2"
+ansi_term = "0.11.0"
+crossterm = "0.4.3"
