@@ -6,6 +6,7 @@ Program arguments:
 * `-c` or `--City` to specify the located city
 * `-s` or `--Save` for saving the located city into a config file
 * `-m` or `--Moon` for getting information about the current mondphase
+* `-n` or `--Now` for displaying only the current weather data
 * `-h` or `--Help` for printing the command list
 
 ## Licence

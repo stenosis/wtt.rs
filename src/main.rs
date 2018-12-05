@@ -3,7 +3,7 @@ extern crate directories;
 extern crate ansi_term;
 extern crate crossterm;
 
-use std::io::{stdout, Write};
+use std::io::{Write};
 use std::io::prelude::*;
 use std::fs::File;
 use curl::easy::{Easy};
@@ -43,7 +43,7 @@ fn main() {
         // make sure we got some data to look for
         if config.city.len() > 0 {
             // determine the weather information from wttr.in and print it
-            get_wttr_information(&config.city);
+            get_wttr_information(&config);
 
         } else {
             println!("Please specify a city with -c");
@@ -80,16 +80,44 @@ fn load_city_from_disk() -> Result<String, String> {
 
 /// Gets the weather information for the given city location
 /// from wttr.in and prints the result into the std out.
-fn get_wttr_information(city: &str) {
+fn get_wttr_information(config: &config::Config) {
 
-    let url = format!("wttr.in/{}", &city);
+    let url = format!("wttr.in/{}", &config.city);
     let mut easy = Easy::new();
     easy.url(&url).unwrap();
     easy.useragent("curl/7.37.0").unwrap();
-    easy.write_function(|data| {
-        Ok(stdout().write(data).unwrap())
-    }).unwrap();
-    easy.perform().unwrap();
+    let mut dst = Vec::new();
+    
+    {
+        let mut transfer = easy.transfer();
+        transfer.write_function(|data| {
+            dst.extend_from_slice(data);
+            Ok(data.len())
+        }).unwrap();
+        transfer.perform().unwrap();
+    };
+
+    // transfered data and std output
+    let data = String::from_utf8(dst).unwrap();
+    let mut output = String::from("");
+
+    // show only the current weather data
+    if config.show_now && !config.show_moon {
+
+        for (i, line) in data.lines().enumerate() {
+            if i < 7 {
+                output = format!("{}\n{}", output, line)
+            } else {
+                output += "\n";
+                break;
+            }
+        }
+
+    // show the entire weather data
+    } else {
+        output = format!("\n{}", data);
+    }
+    println!("{}", output);
 }
 
 /// Prints some simple program instructions
@@ -101,6 +129,7 @@ fn print_help() {
     println!("\t-c or --City to specify the located city");
     println!("\t-s or --Save for saving the located city into a config file");
     println!("\t-m or --Moon for getting information about the current mondphase");
+    println!("\t-n or --Now for displaying only the current weather data");
     println!("\t-h or --Help for printing the command list\n");
 }
 

@@ -16,9 +16,13 @@ const ARG_MOON_SHORT: &str = "-m";
 const ARG_SAVE_FULL: &str = "--Save";
 const ARG_SAVE_SHORT: &str = "-s";
 
+const ARG_NOW_FULL: &str ="--Now";
+const ARG_NOW_SHORT: &str = "-n";
+
 /// The config is a representation of the program options
 pub struct Config {
     pub city: String,
+    pub show_now: bool,
     pub show_moon: bool,
     pub show_help: bool,
     pub save: bool
@@ -29,6 +33,7 @@ impl Config {
     pub fn new() -> Config {
         Config {
             city: String::from(""),
+            show_now: false,
             show_moon: false,
             show_help: false,
             save: false
@@ -55,6 +60,9 @@ impl Config {
                 
                 ARG_HELP_FULL => self.show_help = true,
                 ARG_HELP_SHORT => self.show_help = true,
+
+                ARG_NOW_FULL => self.show_now = true,
+                ARG_NOW_SHORT => self.show_now = true,
 
                 ARG_MOON_FULL => self.show_moon = true,
                 ARG_MOON_SHORT => self.show_moon = true,
